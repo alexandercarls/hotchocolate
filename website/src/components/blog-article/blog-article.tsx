@@ -9,11 +9,11 @@ import {
   ArticleContent,
   ArticleHeader,
   ArticleTitle,
-  ArticleWrapper,
 } from "../misc/article-elements";
-import { BlogArticleMetadata } from "../misc/blog-article-metadata";
-import { BlogArticleSharebar } from "../misc/blog-article-sharebar";
-import { BlogArticleTags } from "../misc/blog-article-tags";
+import { BlogArticleMetadata } from "./blog-article-metadata";
+import { BlogArticleSharebar } from "./blog-article-sharebar";
+import { BlogArticleTags } from "./blog-article-tags";
+import {IsTablet} from '../doc-page/shared-style';
 
 interface BlogArticleProperties {
   data: BlogArticleFragment;
@@ -73,6 +73,15 @@ export const BlogArticleGraphQLFragment = graphql`
     ...ArticleComments
     ...BlogArticleSharebar
   }
+`;
+
+const ArticleWrapper = styled.div`
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 20px 10px 0;
+  ${IsTablet(`
+    padding: 0;
+  `)}
 `;
 
 const Container = styled.div`

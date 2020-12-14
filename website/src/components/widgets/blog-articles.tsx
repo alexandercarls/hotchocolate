@@ -4,8 +4,8 @@ import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import { BlogArticlesFragment } from "../../../graphql-types";
 import { ArticleTitle } from "../misc/article-elements";
-import { BlogArticleMetadata } from "../misc/blog-article-metadata";
-import { BlogArticleTags } from "../misc/blog-article-tags";
+import { BlogArticleMetadata } from "../blog-article/blog-article-metadata";
+import { BlogArticleTags } from "../blog-article/blog-article-tags";
 import { Link } from "../misc/link";
 import { Pagination } from "../misc/pagination";
 

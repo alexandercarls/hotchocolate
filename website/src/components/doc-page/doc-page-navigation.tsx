@@ -17,19 +17,17 @@ import {
   toggleTOC,
 } from "../../state/common";
 import {
-  BodyStyle,
-  FixedContainer,
+  DocPageStickySideBarStyle,
   MostProminentSection,
-  Navigation,
 } from "./doc-page-elements";
 import { DocPagePaneHeader } from "./doc-page-pane-header";
-import { IconContainer } from "./icon-container";
-import { Link } from "./link";
-import { useStickyElement } from "./useStickyElement";
+import { IconContainer } from "../misc/icon-container";
+import { Link } from "../misc/link";
 
 import ArrowDownIconSvg from "../../images/arrow-down.svg";
 import ArrowUpIconSvg from "../../images/arrow-up.svg";
 import ProductSwitcherIconSvg from "../../images/th-large.svg";
+import {BoxShadow, IsMobile, IsTablet} from './shared-style';
 
 interface DocPageNavigationProperties {
   data: DocPageNavigationFragment;
@@ -44,10 +42,6 @@ export const DocPageNavigation: FunctionComponent<DocPageNavigationProperties> =
   selectedProduct,
   selectedVersion,
 }) => {
-  const { containerRef, elementRef } = useStickyElement<
-    HTMLElement,
-    HTMLDivElement
-  >(1050);
   const expandedPaths = useSelector<State, string[]>(
     (state) => state.common.expandedPaths
   );
@@ -185,12 +179,10 @@ export const DocPageNavigation: FunctionComponent<DocPageNavigationProperties> =
   }, [activeProduct, selectedPath, selectedProduct]);
 
   return (
-    <Navigation ref={containerRef}>
-      <BodyStyle disableScrolling={showTOC} />
-      <FixedContainer ref={elementRef} className={showTOC ? "show" : ""}>
+    <Navigation className={showTOC ? "show" : ""}>
         <DocPagePaneHeader
           title="Table of contents"
-          showWhenScreenWidthIsSmallerThan={1050}
+          showWhenScreenWidthIsSmallerThan={1071}
           onClose={handleCloseTOC}
         />
         <ProductSwitcher>
@@ -280,7 +272,6 @@ export const DocPageNavigation: FunctionComponent<DocPageNavigationProperties> =
             )}
           </MostProminentSection>
         )}
-      </FixedContainer>
     </Navigation>
   );
 };
@@ -327,6 +318,30 @@ interface Item {
   title: string;
   items?: Item[];
 }
+
+export const Navigation = styled.nav`
+  ${DocPageStickySideBarStyle}
+
+  max-width: 250px;
+  padding: 25px 0 0;
+
+  transition: margin-left 250ms;
+  background-color: white;
+
+  &.show {
+    margin-left: 0;
+  }
+
+  ${IsMobile(`
+    max-width: none;
+    width: 100%;
+  `)}
+
+  ${IsTablet(`
+    margin-left: -105%;
+    ${BoxShadow}
+  `)}
+`;
 
 const ProductSwitcher = styled.div`
   display: flex;
@@ -382,9 +397,9 @@ const ProductSwitcherDialog = styled.div<{ open: boolean }>`
   background-color: #fff;
 
   @media only screen and (min-width: 1070px) {
+    top: 135px;
     position: fixed;
     z-index: 10;
-    top: 150px;
     flex-direction: row;
     flex-wrap: wrap;
     margin: 0 14px;

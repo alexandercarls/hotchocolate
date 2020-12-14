@@ -1,16 +1,7 @@
 import styled from "styled-components";
 
-export const ArticleWrapper = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-
-  @media only screen and (min-width: 820px) {
-    padding: 20px 10px 0;
-  }
-`;
-
 export const Article = styled.article`
+  overflow: hidden;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;

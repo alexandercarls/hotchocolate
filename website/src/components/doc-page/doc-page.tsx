@@ -10,16 +10,16 @@ import {
   ArticleContent,
   ArticleHeader,
   ArticleTitle,
-  ArticleWrapper,
 } from "../misc/article-elements";
 import { ArticleSections } from "../misc/article-sections";
-import { DocPageAside } from "../misc/doc-page-aside";
-import { DocPageCommunity } from "../misc/doc-page-community";
-import { DocPageLegacy } from "../misc/doc-page-legacy";
-import { DocPageNavigation } from "../misc/doc-page-navigation";
+import {Aside, DocPageAside} from "./doc-page-aside";
+import { DocPageCommunity } from "./doc-page-community";
+import { DocPageLegacy } from "./doc-page-legacy";
+import {DocPageNavigation, Navigation} from "./doc-page-navigation";
 
 import ListAltIconSvg from "../../images/list-alt.svg";
 import NewspaperIconSvg from "../../images/newspaper.svg";
+import {DocPageDesktopGridColumns, IsDesktop, IsMobile, IsSmallDesktop, IsTablet} from './shared-style';
 
 interface DocPageProperties {
   data: DocPageFragment;
@@ -57,22 +57,24 @@ export const DocPage: FunctionComponent<DocPageProperties> = ({
         selectedVersion={selectedVersion}
       />
       <ArticleWrapper>
-        <Article>
-          {false && <DocPageLegacy />}
-          <ArticleHeader>
-            <ResponsiveMenu>
-              <Button onClick={handleToggleTOC} className="toc-toggle">
-                <ListAltIconSvg /> Table of contents
-              </Button>
-              <Button onClick={handleToggleAside} className="aside-toggle">
-                <NewspaperIconSvg /> About this article
-              </Button>
-            </ResponsiveMenu>
-            <DocArticleTitle>{title}</DocArticleTitle>
-          </ArticleHeader>
-          <ArticleContent dangerouslySetInnerHTML={{ __html: html! }} />
-        </Article>
-        {false && <ArticleComments data={data} path={path} title={title} />}
+        <ArticleContainer>
+          <Article>
+            {false && <DocPageLegacy />}
+            <ArticleHeader>
+              <ResponsiveMenu>
+                <Button onClick={handleToggleTOC} className="toc-toggle">
+                  <ListAltIconSvg /> Table of contents
+                </Button>
+                <Button onClick={handleToggleAside} className="aside-toggle">
+                  <NewspaperIconSvg /> About this article
+                </Button>
+              </ResponsiveMenu>
+              <ArticleTitle>{title}</ArticleTitle>
+            </ArticleHeader>
+            <ArticleContent dangerouslySetInnerHTML={{ __html: html! }} />
+          </Article>
+          {false && <ArticleComments data={data} path={path} title={title} />}
+        </ArticleContainer>
       </ArticleWrapper>
       <DocPageAside>
         <DocPageCommunity data={data} originPath={originPath} />
@@ -105,25 +107,79 @@ export const DocPageGraphQLFragment = graphql`
   }
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 820px;
+const ArticleWrapper = styled.div`
+  display: grid;
+  ${DocPageDesktopGridColumns};
+  ${IsSmallDesktop(`
+    grid-template-columns: 1fr;
+  `)}
+  grid-template-rows: 1fr;
+  padding: 6px;
+`;
 
-  @media only screen and (min-width: 1070px) {
-    max-width: 1070px;
+const ArticleContainer = styled.div`
+  padding: 20px;
+  grid-row: 1;
+  grid-column: 3;
+  ${IsSmallDesktop(`
+      margin-top: 50px;
+  `)}
+`;
+
+const Container = styled.div`
+  display: grid;
+  ${DocPageDesktopGridColumns};
+  ${IsSmallDesktop(`
+    grid-template-columns: 250px 1fr;
+  `)}
+
+  ${IsTablet(`
+    grid-template-columns: 1fr;
+  `)}
+
+  grid-template-rows: 1fr;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+
+  ${Navigation} {
+    grid-row: 1;
+    grid-column: 2;
+
+    ${IsSmallDesktop(`
+      grid-column: 1;
+    `)}
   }
 
-  @media only screen and (min-width: 1320px) {
-    max-width: 1320px;
+  ${ArticleWrapper} {
+    grid-row: 1;
+    grid-column: 1 / 6;
+
+    ${IsSmallDesktop(`
+      grid-column: 2 / 5;
+    `)}
+
+    ${IsTablet(`
+      grid-column: 1 / 5;
+    `)}
+  }
+
+  ${Aside} {
+    grid-row: 1;
+    grid-column: 4;
+
+    ${IsMobile(`
+      grid-column: 1;
+    `)}
   }
 `;
 
 const ResponsiveMenu = styled.div`
   position: fixed;
-  right: 0;
-  left: 0;
+  top: 60px;
+  right: 10px;
+  left: 260px;
+  box-sizing: border-box;
   z-index: 2;
   display: flex;
   flex-direction: row;
@@ -136,32 +192,27 @@ const ResponsiveMenu = styled.div`
   );
 
   @media only screen and (min-width: 820px) {
-    position: initial;
-    right: initial;
-    left: initial;
-    z-index: initial;
     padding-right: 50px;
     padding-left: 50px;
-    background: initial;
   }
 
-  @media only screen and (min-width: 1070px) {
+  ${IsDesktop(`
+    display: none;
+  `)}
+
+  ${IsSmallDesktop(`
     > .toc-toggle {
       display: none;
     }
-  }
+    left: 0;
+    right: 0;
+  `)}
 
-  @media only screen and (min-width: 1320px) {
-    display: none;
-  }
-`;
-
-const DocArticleTitle = styled(ArticleTitle)`
-  margin-top: 68px;
-
-  @media only screen and (min-width: 820px) {
-    margin-top: 20px;
-  }
+  ${IsTablet(`
+    > .toc-toggle {
+      display: initial;
+    }
+  `)}
 `;
 
 const Button = styled.button`
